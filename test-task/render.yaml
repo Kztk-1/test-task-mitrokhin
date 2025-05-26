@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: telegram-auth
+    runtime: java
+    buildCommand: ./mvnw clean package -DskipTests
+    startCommand: java -jar target/*.jar
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        value: ${DB_URL}
+      - key: SPRING_DATASOURCE_USERNAME
+        value: ${DB_USER}
+      - key: SPRING_DATASOURCE_PASSWORD
+        value: ${DB_PASSWORD}
+      - key: TELEGRAM_BOT_TOKEN
+        value: ${BOT_TOKEN}
