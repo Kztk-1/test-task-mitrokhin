@@ -36,6 +36,7 @@ public class MainController {
     @GetMapping("/")
     public String home(@RequestParam String initData, Model model) {
         if (!validator.validate(initData)) {
+            model.addAttribute("errorMessage", "Validation failed");
             return "error";
         }
 
@@ -43,7 +44,8 @@ public class MainController {
         try {
             userData = parseUser(initData);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            model.addAttribute("errorMessage", "Parsing failed");
+            return "error";
         }
         User user = userService.processUserData(userData); // Обрабатываем и возвращаем обновленное/добавленное
         model.addAttribute("user", user);
