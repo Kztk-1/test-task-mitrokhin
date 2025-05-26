@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User Info</title>
+    <style>
+        .container { max-width: 600px; margin: 20px auto; padding: 20px; border: 1px solid #ddd; }
+        .user-info { margin-top: 15px; }
+        .user-info p { margin: 5px 0; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>User Information</h1>
+    <div class="user-info">
+        <p><strong>ID:</strong> <span th:text="${user.telegramId}"></span></p>
+        <p><strong>Name:</strong> <span th:text="${user.firstName + ' ' + user.lastName}"></span></p>
+        <p><strong>Username:</strong> @<span th:text="${user.username}"></span></p>
+    </div>
+</div>
+</body>
+</html>
