@@ -25,9 +25,15 @@ public class MainController {
 
 
     @GetMapping("/")
-    public String home(@RequestParam String initData, Model model) {
-        log.debug("Received initData: {}", initData);
-
+    public String home(
+            @RequestParam(name = "initData", required = false) String initData,
+            Model model
+    ) {
+        if (initData == null || initData.isBlank()) {
+            log.error("Missing initData parameter");
+            model.addAttribute("errorMessage", "Invalid request: missing initData");
+            return "error";
+        }
         if (!validator.validate(initData)) {
             log.warn("Validation failed for initData: {}", initData);
             model.addAttribute("errorMessage", "Validation failed");
