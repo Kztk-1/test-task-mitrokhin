@@ -6,6 +6,7 @@ import com.kztk.test_task.model.User;
 import com.kztk.test_task.service.UserService;
 import com.kztk.test_task.util.TelegramDataValidator;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class MainController {
@@ -35,16 +37,31 @@ public class MainController {
     */
     @GetMapping("/")
     public String home(@RequestParam String initData, Model model) {
+        log.debug("Received initData: {}", initData);
+
         if (!validator.validate(initData)) {
+            log.warn("Validation failed for initData: {}", initData);
             model.addAttribute("errorMessage", "Validation failed");
             return "error";
         }
 
         TelegramUser userData;
         try {
-            userData = parseUser(initData);
+            TelegramUser userData = parseUser(initData);
+            log.info("Parsed user data: {}", userData);
+
+            User user = userService.processUserData(userData);
+            log.debug("Processed user: {}", user);
+
+            model.addAttribute("user", user);
+            return "home";
         } catch (IOException e) {
+            log.error("Error parsing user data from initData: {}", initData, e);
             model.addAttribute("errorMessage", "Parsing failed");
+            return "error";
+        } catch (IllegalArgumentException e) {
+            log.error("Invalid user data in initData: {}", initData, e);
+            model.addAttribute("errorMessage", "Invalid user data");
             return "error";
         }
         User user = userService.processUserData(userData); // Обрабатываем и возвращаем обновленное/добавленное
@@ -80,12 +97,14 @@ public class MainController {
                 После декодирования: {"id":123456789,"isBot":false,"firstName":"Иван"}
                 */
                 String userJson = URLDecoder.decode(pair[1], StandardCharsets.UTF_8);
+                log.trace("Decoded user JSON: {}", userJson);
 
                 // Парсим JSON в объект
                 ObjectMapper objectMapper = new ObjectMapper();
                 return objectMapper.readValue(userJson, TelegramUser.class);
             }
         }
-        throw new IllegalArgumentException("User data error");
+        log.error("User data not found in initData: {}", initData);
+        throw new IllegalArgumentException("User data not found in initData");
     }
 }
