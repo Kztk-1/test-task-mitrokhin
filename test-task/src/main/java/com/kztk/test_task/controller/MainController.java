@@ -31,6 +31,7 @@ public class MainController {
             @RequestParam(name = "initData", required = false) String initData,
             @RequestBody(required = false) Map<String, Object> data,
             Model model
+            jdjd
     ) {
 
         //NEW
