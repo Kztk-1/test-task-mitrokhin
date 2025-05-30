@@ -29,7 +29,7 @@ public class MainController {
     @GetMapping("/")
     public String home(
             @RequestParam(name = "initData", required = false) String initData,
-            @RequestBody Map<String, Object> data,
+            @RequestBody(required = false) Map<String, Object> data,
             Model model
     ) {
 
