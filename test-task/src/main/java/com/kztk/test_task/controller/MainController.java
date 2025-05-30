@@ -10,11 +10,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 @Slf4j
 @Controller
@@ -27,8 +29,15 @@ public class MainController {
     @GetMapping("/")
     public String home(
             @RequestParam(name = "initData", required = false) String initData,
+            @RequestBody Map<String, Object> data,
             Model model
     ) {
+
+        //NEW
+        for (Map.Entry entry : data.entrySet()) {
+            System.out.println(entry.getKey() + " " + entry.getValue());
+        }
+
         if (initData == null || initData.isBlank()) {
             log.error("Missing initData parameter");
             model.addAttribute("errorMessage", "Invalid request: missing initData");
